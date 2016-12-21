@@ -2,18 +2,16 @@ package com.luczkow.pixels;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by Chris on 1/31/2016.
  */
-public class Palette {
+class Palette {
 
     private Color[] colors;
 
-    public Palette(BufferedImage image) {
+    Palette(BufferedImage image) {
 
         Random rnd = new Random();
 
@@ -22,25 +20,33 @@ public class Palette {
 
         colors = new Color[rnd.nextInt(max - min) + min];
 
+        System.out.println("Palette.COLOR_COUNT = " + colors.length);
+
         for (int i = 0; i < colors.length; i++) {
             colors[i] = new Color(image.getRGB(rnd.nextInt(image.getWidth()), rnd.nextInt(image.getHeight())));
         }
 
-//        if (rnd.nextBoolean()) {
-            Arrays.sort(colors, new BrightnessComparator());
-//        }
+        int n = rnd.nextInt(4);
+        if (n > 0) {
+            System.out.println("Palette.SORTED = true");
+            if (n > 1) {
+                System.out.println("Palette.SORT_ASC");
+                Arrays.sort(colors, (a, b) ->
+                        (a.getRed() + a.getGreen() + a.getBlue()) - (b.getRed() + b.getGreen() + b.getBlue()));
+            }
+            else {
+                System.out.println("Palette.SORT_DESC");
+                Arrays.sort(colors, (b, a) ->
+                        (a.getRed() + a.getGreen() + a.getBlue()) - (b.getRed() + b.getGreen() + b.getBlue()));
+            }
+        }
+        else {
+            System.out.println("Palette.SORTED = false");
+        }
     }
 
-    public Color[] getColors() {
+    Color[] getColors() {
 
         return colors;
     }
-
-    public class BrightnessComparator implements Comparator<Color> {
-
-        @Override
-        public int compare(Color color1, Color color2) {
-            return (color1.getRed() + color1.getGreen() + color1.getBlue()) -
-                    (color2.getRed() + color2.getGreen() + color2.getBlue());
-        }
-    }}
+}

@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by chris luczkow on 12/19/2016.
@@ -25,8 +26,10 @@ public class Artists {
             }
         }
 
-        for (Artist artist : artists) {
-            artist.create();
+        Random rnd = new Random();
+
+        for (int i = 0; i < 50; i++) {
+            artists.get(rnd.nextInt(artists.size())).create();
         }
     }
 }

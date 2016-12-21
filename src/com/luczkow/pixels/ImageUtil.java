@@ -5,9 +5,9 @@ import java.awt.image.BufferedImage;
 /**
  * Created by chris luczkow on 12/11/2016.
  */
-public class ImageUtil {
+class ImageUtil {
 
-    static public BufferedImage rotate(BufferedImage in) {
+    static BufferedImage rotate(BufferedImage in) {
 
         BufferedImage out = new BufferedImage(in.getHeight(), in.getWidth(), BufferedImage.TYPE_INT_ARGB);
 
