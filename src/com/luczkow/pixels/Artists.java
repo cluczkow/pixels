@@ -10,9 +10,9 @@ import java.util.Random;
 /**
  * Created by chris luczkow on 12/19/2016.
  */
-public class Artists {
+class Artists {
 
-    public void create() throws Exception {
+    void create() throws Exception {
 
         Path path = Paths.get(Constants.DIR_IN);
         String[] dirs = new File(path.toString()).list((current, name) ->
@@ -28,8 +28,10 @@ public class Artists {
 
         Random rnd = new Random();
 
-        for (int i = 0; i < 50; i++) {
-            artists.get(rnd.nextInt(artists.size())).create();
+        for (int i = 0; i < 20; i++) {
+            Artist artist = artists.get(rnd.nextInt(artists.size()));
+            artist.create(Params.CompositionType.STANDARD);
+            artist.create(Params.CompositionType.COMPOSITE);
         }
     }
 }

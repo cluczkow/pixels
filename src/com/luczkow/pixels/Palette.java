@@ -11,14 +11,11 @@ class Palette {
 
     private Color[] colors;
 
-    Palette(BufferedImage image) {
+    Palette(BufferedImage image, int count, Params.PaletteSort sort) {
 
         Random rnd = new Random();
 
-        final int min = 3;
-        final int max = 20;
-
-        colors = new Color[rnd.nextInt(max - min) + min];
+        colors = new Color[count];
 
         System.out.println("Palette.COLOR_COUNT = " + colors.length);
 
@@ -26,22 +23,19 @@ class Palette {
             colors[i] = new Color(image.getRGB(rnd.nextInt(image.getWidth()), rnd.nextInt(image.getHeight())));
         }
 
-        int n = rnd.nextInt(4);
-        if (n > 0) {
-            System.out.println("Palette.SORTED = true");
-            if (n > 1) {
+        switch (sort) {
+            case ASC:
                 System.out.println("Palette.SORT_ASC");
                 Arrays.sort(colors, (a, b) ->
                         (a.getRed() + a.getGreen() + a.getBlue()) - (b.getRed() + b.getGreen() + b.getBlue()));
-            }
-            else {
+                break;
+            case DESC:
                 System.out.println("Palette.SORT_DESC");
                 Arrays.sort(colors, (b, a) ->
                         (a.getRed() + a.getGreen() + a.getBlue()) - (b.getRed() + b.getGreen() + b.getBlue()));
-            }
-        }
-        else {
-            System.out.println("Palette.SORTED = false");
+                break;
+            default:
+                System.out.println("Palette.SORT_NONE");
         }
     }
 

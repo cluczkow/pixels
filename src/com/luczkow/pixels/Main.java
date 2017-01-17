@@ -1,6 +1,4 @@
-package com.luczkow;
-
-import com.luczkow.pixels.*;
+package com.luczkow.pixels;
 
 /**
  * Created by chris on 7/31/2016.

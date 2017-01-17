@@ -9,7 +9,7 @@ class ImageUtil {
 
     static BufferedImage rotate(BufferedImage in) {
 
-        BufferedImage out = new BufferedImage(in.getHeight(), in.getWidth(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage out = new BufferedImage(in.getHeight(), in.getWidth(), BufferedImage.TYPE_INT_RGB);
 
         for (int x = 0; x < out.getWidth(); x++) {
             for (int y = 0; y < out.getHeight(); y++) {

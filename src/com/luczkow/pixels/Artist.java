@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.List;
 
 /**
  * Created by Chris on 2/1/2016.
@@ -23,33 +22,43 @@ class Artist {
         this.pictures = new Pictures(Constants.DIR_IN + "\\" + id);
     }
 
-    void create() throws Exception {
+    void create(Params.CompositionType type) throws Exception {
 
         long startTime = System.currentTimeMillis();
         String imageId = String.valueOf(new Date().getTime());
-        System.out.println(id + " " + imageId);
+        System.out.println(imageId + " " + id);
 
         BufferedImage image;
 
-        Random rnd = new Random();
-        if (rnd.nextBoolean()) {
-            System.out.println("CompositionType.STANDARD");
+        if (type == Params.CompositionType.STANDARD) {
+            System.out.println("Composition.TYPE = STANDARD");
             image = createStandard();
         }
         else {
-            System.out.println("CompositionType.COMPOSITE");
+            System.out.println("Composition.TYPE = COMPOSITE");
             image = createComposite();
         }
 
         if (image != null) {
-//            File file = new File(
-//                    Constants.DIR_OUT + "\\" + id + "\\" + imageId + ".png");
             File file = new File(
-                    Constants.DIR_OUT + "\\" + imageId + "-" + id + ".png");
-            ImageIO.write(image, "png", file);
+                    Constants.DIR_OUT + "\\" + imageId + "-" + id + ".jpg");
+            ImageIO.write(image, "jpg", file);
             System.out.println((System.currentTimeMillis() - startTime) / 1000);
             System.out.println();
         }
+    }
+
+    BufferedImage paint(BufferedImage canvas, BufferedImage source) {
+
+        int[][] sortedPixels = PixelSorter.sort(source, PixelSorter.SortType.BRIGHTNESS, PixelSorter.SortDir.DESC);
+        canvas = paint(canvas, source, sortedPixels);
+
+        return canvas;
+    }
+
+    Pictures getPictures() {
+
+        return pictures;
     }
 
     private BufferedImage createStandard() throws Exception {
@@ -65,46 +74,26 @@ class Artist {
         if (rnd.nextBoolean())
         {
             System.out.println("Palette.OTHER_IMAGE");
-            palette = new Palette(ImageIO.read(new File(pictures.rnd().toString())));
+            palette = new Palette(ImageIO.read(new File(pictures.rnd().toString())), 5, Params.PaletteSort.DESC);
         }
         else {
             System.out.println("Palette.SAME_IMAGE");
-            palette = new Palette(image);
+            palette = new Palette(image, 5, Params.PaletteSort.DESC);
         }
 
-        int[][] sortedPixels = PixelSorter.sort(image, PixelSorter.SortType.BRIGHTNESS, PixelSorter.SortDir.ASC);
+        int[][] sortedPixels = PixelSorter.sort(image, PixelSorter.SortType.BRIGHTNESS, PixelSorter.SortDir.DESC);
 
         return paint(image, palette, sortedPixels);
     }
 
     private BufferedImage createComposite() throws Exception {
 
-        int count = 10;
-        List<BufferedImage> layers = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            String path = pictures.rnd().toString();
-            System.out.println(path);
-            layers.add(ImageIO.read(new File(path)));
-        }
+        Composite composite = new Composite(this, 3);
+        BufferedImage image = composite.paint(composite.getMaxWidth(), composite.getMaxHeight());
 
-        for (int i = 0; i < layers.size(); i++) {
-            if (layers.get(i).getWidth() < layers.get(i).getHeight()) {
-                layers.set(i, ImageUtil.rotate(layers.get(i)));
-            }
-        }
-
-        BufferedImage canvas = layers.get(0);
-        Palette palette = new Palette(canvas);
-
-        for (BufferedImage layer : layers) {
-            int[][] sortedPixels = PixelSorter.sort(layer, PixelSorter.SortType.BRIGHTNESS, PixelSorter.SortDir.ASC);
-            layer = paint(layer, palette, sortedPixels);
-            if (!layer.equals(canvas)) {
-                paint(canvas, layer, sortedPixels);
-            }
-        }
-
-        return canvas;
+        int[][] sortedPixels = PixelSorter.sort(image, PixelSorter.SortType.BRIGHTNESS, PixelSorter.SortDir.DESC);
+        Palette palette = new Palette(image, 5, Params.PaletteSort.DESC);
+        return paint(image, palette, sortedPixels);
     }
 
     private BufferedImage paint(BufferedImage image, Palette palette, int[][] sortedPixels) {
